@@ -425,6 +425,36 @@
   .paint-hint{ font-size:11.5px; color:var(--muted-warm); }
   .floppy-art{ display:block; margin:6px auto 0; }
 
+  .sweeper-bar{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:var(--ink2); padding:6px 10px; border:1px solid var(--gold-dim);
+    font-family:'Courier New', monospace; font-size:13px; color:var(--gold);
+  }
+  .sweeper-controls{ margin:10px 0 0; }
+  .sweeper-grid{
+    display:grid;
+    grid-template-columns:repeat(9, 24px);
+    grid-template-rows:repeat(9, 24px);
+    gap:1px;
+    justify-content:center;
+    margin:10px auto 0;
+    background:var(--gold-dim);
+    border:2px solid var(--gold-dim);
+    width:fit-content;
+  }
+  .cell{
+    width:24px; height:24px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:700;
+    background:var(--parchment);
+    border:2px outset #e8dcc0;
+    cursor:pointer;
+    user-select:none;
+  }
+  .cell.revealed{ border:1px solid var(--gold-dim); background:#efe6d2; cursor:default; }
+  .cell svg{ width:14px; height:14px; }
+  .sweeper-msg{ min-height:1.4em; font-weight:600; margin-top:10px; color:var(--wine); }
+
   #bootScreen{
     position:fixed; inset:0; z-index:5000;
     background:#06050a;
@@ -628,6 +658,11 @@
     <div class="icon" data-win="mattstuff" tabindex="0" role="button" aria-label="Open Matt's Stuff folder">
       <svg viewBox="0 0 32 32"><path d="M3 9h10l3 3h13v15a1 1 0 01-1 1H4a1 1 0 01-1-1V9z" fill="#e0b25a" stroke="#6b4423" stroke-width="1.3"/><path d="M3 9V7a1 1 0 011-1h7l2 2" fill="#e0b25a" stroke="#6b4423" stroke-width="1.3"/></svg>
       <div class="icon-label">Matt's Stuff</div>
+    </div>
+
+    <div class="icon" data-win="sweeper" tabindex="0" role="button" aria-label="Open Ring Sweeper game">
+      <svg viewBox="0 0 32 32"><circle cx="13" cy="18" r="7" fill="none" stroke="#c39a5c" stroke-width="2.5"/><circle cx="20" cy="13" r="7" fill="none" stroke="#8a5a1f" stroke-width="2.5"/></svg>
+      <div class="icon-label">RingSweeper.exe</div>
     </div>
 
     <div class="icon" data-win="recycle" tabindex="0" role="button" aria-label="Open Recycle Bin">
@@ -836,6 +871,11 @@ We can't wait to celebrate with you.
       <div class="frame"><img src="images/gallery-ring-window.jpg" alt="Engagement ring shown against a city window at night"></div>
       <div class="frame"><img src="images/gallery-snowboard.jpg" alt="Katrina and Matthew in a gondola on a snowboarding trip"></div>
       <div class="frame"><img src="images/gallery-coast.jpg" alt="Katrina and Matthew standing on coastal rocks by the ocean"></div>
+      <div class="frame"><img src="images/wedding1.jpg" alt="Wedding photo 1"></div>
+      <div class="frame"><img src="images/wedding2.jpg" alt="Wedding photo 2"></div>
+      <div class="frame"><img src="images/wedding3.jpg" alt="Wedding photo 3"></div>
+      <div class="frame"><img src="images/wedding4.jpg" alt="Wedding photo 4"></div>
+      <div class="frame"><img src="images/wedding5.jpg" alt="Wedding photo 5"></div>
     </div>
   </div>
 </div>
@@ -931,6 +971,31 @@ We can't wait to celebrate with you.
   </div>
 </div>
 
+<div class="xp-window" id="win-sweeper" style="left:240px; top:100px; width:300px; height:430px;">
+  <div class="title-bar">
+    <svg viewBox="0 0 32 32"><circle cx="13" cy="18" r="7" fill="none" stroke="#c39a5c" stroke-width="2.5"/><circle cx="20" cy="13" r="7" fill="none" stroke="#8a5a1f" stroke-width="2.5"/></svg>
+    <span class="title-bar-text">RingSweeper.exe</span>
+    <div class="title-bar-controls">
+      <button data-act="min" aria-label="Minimize">_</button>
+      <button data-act="max" aria-label="Maximize">&#9633;</button>
+      <button class="btn-close" data-act="close" aria-label="Close">&#10005;</button>
+    </div>
+  </div>
+  <div class="window-body" style="text-align:center;">
+    <p style="margin:0 0 8px; font-size:12px; color:var(--muted-warm);">Clear the squares. Avoid Cold Feet.</p>
+    <div class="sweeper-bar">
+      <span id="sweeperCount">10 left</span>
+      <button id="sweeperReset" class="btn-link" type="button" style="margin:0;">Reset</button>
+      <span id="sweeperTimer">000s</span>
+    </div>
+    <div class="sweeper-controls">
+      <button id="sweeperFlagToggle" class="btn-link" type="button">Flag Mode: Off</button>
+    </div>
+    <div class="sweeper-grid" id="sweeperGrid"></div>
+    <p id="sweeperMsg" class="sweeper-msg"></p>
+  </div>
+</div>
+
 <div class="xp-window" id="win-recycle" style="left:680px; top:260px; width:380px; height:340px;">
   <div class="title-bar">
     <svg viewBox="0 0 32 32"><path d="M9 10h14l-1.4 16H10.4z" fill="#2a2433" stroke="#8a713f" stroke-width="1.5"/></svg>
@@ -965,6 +1030,7 @@ We can't wait to celebrate with you.
   <div class="start-menu-item" data-win="paint"><svg viewBox="0 0 32 32"><path d="M16 4c-7 0-12 5-12 11 0 4 3 6 6 6 1 0 2-1 2-2s-1-1-1-2c0-1 1-2 2-2h6c4 0 7-3 7-7 0-3-4-4-10-4z" fill="#e8d2a0" stroke="#6b4423" stroke-width="1.3"/></svg>guestbook.bmp</div>
   <div class="start-menu-item" data-win="floppy"><svg viewBox="0 0 32 32"><path d="M5 4h18l4 4v20a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1z" fill="#1b1430" stroke="#c39a5c" stroke-width="1.3"/></svg>Save_The_Date.ics</div>
   <div class="start-menu-item" data-win="mattstuff"><svg viewBox="0 0 32 32"><path d="M3 9h10l3 3h13v15a1 1 0 01-1 1H4a1 1 0 01-1-1V9z" fill="#e0b25a" stroke="#6b4423" stroke-width="1.3"/></svg>Matt's Stuff</div>
+  <div class="start-menu-item" data-win="sweeper"><svg viewBox="0 0 32 32"><circle cx="13" cy="18" r="7" fill="none" stroke="#c39a5c" stroke-width="2.5"/><circle cx="20" cy="13" r="7" fill="none" stroke="#8a5a1f" stroke-width="2.5"/></svg>RingSweeper.exe</div>
 </div>
 
 <!-- ======= ERROR DIALOG EASTER EGG ======= -->
@@ -1009,7 +1075,7 @@ We can't wait to celebrate with you.
 
 <script>
 (function(){
-  var WIN_IDS = ['info','venues','schedule','travel','rsvp','chat','mp3','photos','paint','floppy','mattstuff','recycle'];
+  var WIN_IDS = ['info','venues','schedule','travel','rsvp','chat','mp3','photos','paint','floppy','mattstuff','sweeper','recycle'];
   var TITLES = {
     info:'Save_The_Date.txt - Notepad',
     venues:'Ceremony_and_Reception.exe',
@@ -1022,6 +1088,7 @@ We can't wait to celebrate with you.
     paint:'guestbook.bmp - Paint',
     floppy:'Save_The_Date.ics',
     mattstuff:"Matt's Stuff",
+    sweeper:'RingSweeper.exe',
     recycle:'Recycle Bin'
   };
 
@@ -1283,7 +1350,12 @@ We can't wait to celebrate with you.
     'images/gallery-ring-hands.jpg',
     'images/gallery-ring-window.jpg',
     'images/gallery-snowboard.jpg',
-    'images/gallery-coast.jpg'
+    'images/gallery-coast.jpg',
+    'images/wedding1.jpg',
+    'images/wedding2.jpg',
+    'images/wedding3.jpg',
+    'images/wedding4.jpg',
+    'images/wedding5.jpg'
   ];
   var SCRATCHED = [
     'images/scratched-savethedate-1.jpg',
@@ -1498,6 +1570,194 @@ We can't wait to celebrate with you.
 
   setTimeout(function(){ bootSkip.classList.add('show'); }, 1500);
   bootScreen.addEventListener('click', finishBoot);
+})();
+
+(function(){
+  var SIZE = 9, MINE_COUNT = 10;
+  var SNOWFLAKE_SVG = '<svg viewBox="0 0 24 24"><g stroke="#2a6f8a" stroke-width="1.8" fill="none" stroke-linecap="round"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></g></svg>';
+  var FLAG_SVG = '<svg viewBox="0 0 24 24"><line x1="6" y1="2" x2="6" y2="22" stroke="#5c1a2e" stroke-width="2"/><path d="M6 3h12l-3 4 3 4H6z" fill="#c39a5c"/></svg>';
+  var NUM_COLORS = ['', '#5c1a2e','#1f6f46','#a33a3a','#4a2545','#7a5a1f','#1f6f6f','#241f2b','#6b5c4a'];
+
+  var board = [];
+  var gridEl = document.getElementById('sweeperGrid');
+  var countEl = document.getElementById('sweeperCount');
+  var timerEl = document.getElementById('sweeperTimer');
+  var msgEl = document.getElementById('sweeperMsg');
+  var resetBtn = document.getElementById('sweeperReset');
+  var flagToggleBtn = document.getElementById('sweeperFlagToggle');
+
+  var flagMode = false;
+  var firstClick = true;
+  var gameOver = false;
+  var timerInterval = null;
+  var seconds = 0;
+  var flagsPlaced = 0;
+
+  function idx(r, c){ return r * SIZE + c; }
+
+  function buildEmptyBoard(){
+    board = [];
+    for (var i = 0; i < SIZE * SIZE; i++){
+      board.push({ mine:false, revealed:false, flagged:false, count:0 });
+    }
+  }
+
+  function placeMines(excludeIndex){
+    var excluded = {};
+    var er = Math.floor(excludeIndex / SIZE), ec = excludeIndex % SIZE;
+    for (var dr = -1; dr <= 1; dr++){
+      for (var dc = -1; dc <= 1; dc++){
+        var rr = er + dr, cc = ec + dc;
+        if (rr >= 0 && rr < SIZE && cc >= 0 && cc < SIZE) excluded[idx(rr, cc)] = true;
+      }
+    }
+    var placed = 0;
+    while (placed < MINE_COUNT){
+      var p = Math.floor(Math.random() * SIZE * SIZE);
+      if (board[p].mine || excluded[p]) continue;
+      board[p].mine = true;
+      placed++;
+    }
+    for (var r = 0; r < SIZE; r++){
+      for (var c = 0; c < SIZE; c++){
+        if (board[idx(r, c)].mine) continue;
+        var n = 0;
+        for (var ddr = -1; ddr <= 1; ddr++){
+          for (var ddc = -1; ddc <= 1; ddc++){
+            if (ddr === 0 && ddc === 0) continue;
+            var rr2 = r + ddr, cc2 = c + ddc;
+            if (rr2 >= 0 && rr2 < SIZE && cc2 >= 0 && cc2 < SIZE && board[idx(rr2, cc2)].mine) n++;
+          }
+        }
+        board[idx(r, c)].count = n;
+      }
+    }
+  }
+
+  function render(){
+    gridEl.innerHTML = '';
+    for (var r = 0; r < SIZE; r++){
+      for (var c = 0; c < SIZE; c++){
+        (function(r, c){
+          var cell = board[idx(r, c)];
+          var div = document.createElement('div');
+          div.className = 'cell' + (cell.revealed ? ' revealed' : '');
+          if (cell.revealed){
+            if (cell.mine){
+              div.innerHTML = SNOWFLAKE_SVG;
+            } else if (cell.count > 0){
+              div.textContent = cell.count;
+              div.style.color = NUM_COLORS[cell.count];
+            }
+          } else if (cell.flagged){
+            div.innerHTML = FLAG_SVG;
+          }
+          div.addEventListener('click', function(){ handleReveal(r, c); });
+          div.addEventListener('contextmenu', function(e){ e.preventDefault(); handleFlag(r, c); });
+          gridEl.appendChild(div);
+        })(r, c);
+      }
+    }
+    countEl.textContent = (MINE_COUNT - flagsPlaced) + ' left';
+  }
+
+  function startTimer(){
+    if (timerInterval) return;
+    timerInterval = setInterval(function(){
+      seconds++;
+      timerEl.textContent = String(seconds).padStart(3, '0') + 's';
+    }, 1000);
+  }
+  function stopTimer(){ clearInterval(timerInterval); timerInterval = null; }
+
+  function handleReveal(r, c){
+    if (gameOver) return;
+    var cell = board[idx(r, c)];
+    if (cell.flagged || cell.revealed) return;
+    if (flagMode){ handleFlag(r, c); return; }
+
+    if (firstClick){
+      placeMines(idx(r, c));
+      firstClick = false;
+      startTimer();
+    }
+
+    if (cell.mine){
+      cell.revealed = true;
+      gameOver = true;
+      stopTimer();
+      revealAllMines();
+      msgEl.textContent = 'You got Cold Feet! Game over.';
+      render();
+      return;
+    }
+
+    floodReveal(r, c);
+    render();
+    checkWin();
+  }
+
+  function floodReveal(r, c){
+    var stack = [[r, c]];
+    while (stack.length){
+      var pos = stack.pop();
+      var rr = pos[0], cc = pos[1];
+      if (rr < 0 || rr >= SIZE || cc < 0 || cc >= SIZE) continue;
+      var cell = board[idx(rr, cc)];
+      if (cell.revealed || cell.flagged || cell.mine) continue;
+      cell.revealed = true;
+      if (cell.count === 0){
+        for (var dr = -1; dr <= 1; dr++){
+          for (var dc = -1; dc <= 1; dc++){
+            if (dr === 0 && dc === 0) continue;
+            stack.push([rr + dr, cc + dc]);
+          }
+        }
+      }
+    }
+  }
+
+  function revealAllMines(){
+    board.forEach(function(cell){ if (cell.mine) cell.revealed = true; });
+  }
+
+  function handleFlag(r, c){
+    if (gameOver) return;
+    var cell = board[idx(r, c)];
+    if (cell.revealed) return;
+    cell.flagged = !cell.flagged;
+    flagsPlaced += cell.flagged ? 1 : -1;
+    render();
+  }
+
+  function checkWin(){
+    var allSafeRevealed = board.every(function(cell){ return cell.mine || cell.revealed; });
+    if (allSafeRevealed){
+      gameOver = true;
+      stopTimer();
+      msgEl.textContent = 'You said yes! You win!';
+    }
+  }
+
+  function resetGame(){
+    buildEmptyBoard();
+    firstClick = true;
+    gameOver = false;
+    flagsPlaced = 0;
+    seconds = 0;
+    stopTimer();
+    timerEl.textContent = '000s';
+    msgEl.textContent = '';
+    render();
+  }
+
+  flagToggleBtn.addEventListener('click', function(){
+    flagMode = !flagMode;
+    flagToggleBtn.textContent = 'Flag Mode: ' + (flagMode ? 'On' : 'Off');
+  });
+  resetBtn.addEventListener('click', resetGame);
+
+  resetGame();
 })();
 </script>
 

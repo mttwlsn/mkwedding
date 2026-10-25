@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Matthew &amp; Katrina - ChateauOS</title>
-<meta name="description" content="Matthew Wilson &amp; Katrina Zagami are getting married Friday, February 12, 2027 at Le Château, South Salem, New York." />
+<title>Katrina &amp; Matthew - ChateauOS</title>
+<meta name="description" content="Katrina Zagami &amp; Matthew Wilson are getting married Friday, February 12, 2027 at Le Château, South Salem, New York." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
@@ -425,6 +425,40 @@
   .paint-hint{ font-size:11.5px; color:var(--muted-warm); }
   .floppy-art{ display:block; margin:6px auto 0; }
 
+  #bootScreen{
+    position:fixed; inset:0; z-index:5000;
+    background:#06050a;
+    color:var(--gold);
+    font-family:'Courier New', monospace;
+    font-size:14px;
+    padding:40px 20px;
+    display:flex; flex-direction:column; justify-content:center;
+    transition:opacity 0.6s ease;
+  }
+  #bootScreen.fade{ opacity:0; pointer-events:none; }
+  #bootLines{ white-space:pre-wrap; line-height:1.7; max-width:560px; margin:0 auto; width:100%; }
+  #bootLines .line{ opacity:0; transition:opacity 0.2s; }
+  #bootLines .line.show{ opacity:1; }
+  #bootProgressWrap{ max-width:560px; margin:22px auto 0; width:100%; }
+  #bootProgressWrap .progress-outer{ border:1px solid var(--gold-dim); background:#1a1420; }
+  #bootSkip{ text-align:center; margin-top:18px; font-size:11px; color:var(--muted-warm); opacity:0; transition:opacity 0.4s; }
+  #bootSkip.show{ opacity:1; }
+
+  .modal-scrim{
+    position:fixed; inset:0;
+    background:rgba(6,5,10,0.6);
+    display:none;
+    z-index:2999;
+  }
+  .error-dialog{
+    position:fixed !important;
+    left:50% !important; top:50% !important;
+    transform:translate(-50%, -50%);
+    width:340px;
+    z-index:3000;
+  }
+  .error-icon{ display:block; margin:4px auto 0; }
+
   .file-list{ display:flex; flex-direction:column; gap:4px; }
   .file-item{
     display:flex; align-items:center; gap:10px;
@@ -505,6 +539,14 @@
 </style>
 </head>
 <body>
+
+<div id="bootScreen">
+  <div id="bootLines"></div>
+  <div id="bootProgressWrap">
+    <div class="progress-outer"><div class="progress-inner" id="bootProgressInner"></div></div>
+  </div>
+  <div id="bootSkip">click anywhere to skip</div>
+</div>
 
 <div class="desktop" id="desktop">
   <div class="moon"></div>
@@ -608,7 +650,7 @@
     </div>
   </div>
   <div class="menu-fake"><span>File</span><span>Edit</span><span>Format</span><span>View</span><span>Help</span></div>
-  <div class="window-body" style="font-family:'Courier New', monospace; white-space:pre-wrap;">MATTHEW WILSON &amp; KATRINA ZAGAMI
+  <div class="window-body" style="font-family:'Courier New', monospace; white-space:pre-wrap;">KATRINA ZAGAMI &amp; MATTHEW WILSON
 ================================
 are getting married!
 
@@ -732,7 +774,7 @@ We can't wait to celebrate with you.
 <div class="xp-window" id="win-chat" style="left:300px; top:380px; width:340px; height:400px;">
   <div class="title-bar">
     <svg viewBox="0 0 32 32"><path d="M4 8a3 3 0 013-3h14a3 3 0 013 3v8a3 3 0 01-3 3H10l-5 4v-4H7a3 3 0 01-3-3z" fill="#e8d2a0" stroke="#5c1a2e" stroke-width="1.5"/></svg>
-    <span class="title-bar-text">xMattAndKat27x - Instant Message</span>
+    <span class="title-bar-text">xKatAndMatt27x - Instant Message</span>
     <div class="title-bar-controls">
       <button data-act="min" aria-label="Minimize">_</button>
       <button data-act="max" aria-label="Maximize">&#9633;</button>
@@ -740,7 +782,7 @@ We can't wait to celebrate with you.
     </div>
   </div>
   <div class="window-body" style="display:flex; flex-direction:column; padding:10px 10px 0; overflow:visible;">
-    <div class="buddy-row"><span class="online-dot"></span><strong>xMattAndKat27x</strong><span style="color:#6b5c4a; font-size:11px; margin-left:6px;">(Online)</span></div>
+    <div class="buddy-row"><span class="online-dot"></span><strong>xKatAndMatt27x</strong><span style="color:#6b5c4a; font-size:11px; margin-left:6px;">(Online)</span></div>
     <div class="away-box">Away Message: brb planning a wedding!! check the desktop icons for all the details :) ttys&lt;3</div>
     <div class="chat-log" id="chatLog">
       <div class="chat-msg them">heyyy thanks for stopping by our site!! lol</div>
@@ -764,7 +806,7 @@ We can't wait to celebrate with you.
   </div>
   <div class="window-body" style="padding:12px;">
     <div class="napster-status">Connected to Napster &middot; 2,847,193 users online</div>
-    <div class="transfer-row">Transferring: <strong>iris.mp3</strong><br>From: xMattAndKat27x</div>
+    <div class="transfer-row">Transferring: <strong>iris.mp3</strong><br>From: xKatAndMatt27x</div>
     <div class="progress-outer"><div class="progress-inner" id="dlProgress"></div></div>
     <div class="transfer-stats" id="dlStats">0.0 kbps</div>
     <button class="btn-link" id="dlBtn" type="button" style="margin-top:10px;">Download</button>
@@ -788,12 +830,12 @@ We can't wait to celebrate with you.
   </div>
   <div class="window-body">
     <div class="photo-grid" id="photoGrid">
-      <div class="frame"><img src="images/gallery-snow-hug.jpg" alt="Matthew and Katrina embracing on a snowy city street at dusk"></div>
-      <div class="frame"><img src="images/gallery-snow-walk.jpg" alt="Matthew and Katrina walking together through a snowy park"></div>
+      <div class="frame"><img src="images/gallery-snow-hug.jpg" alt="Katrina and Matthew embracing on a snowy city street at dusk"></div>
+      <div class="frame"><img src="images/gallery-snow-walk.jpg" alt="Katrina and Matthew walking together through a snowy park"></div>
       <div class="frame"><img src="images/gallery-ring-hands.jpg" alt="Close-up of their hands clasped together, showing the engagement ring"></div>
       <div class="frame"><img src="images/gallery-ring-window.jpg" alt="Engagement ring shown against a city window at night"></div>
-      <div class="frame"><img src="images/gallery-snowboard.jpg" alt="Matthew and Katrina in a gondola on a snowboarding trip"></div>
-      <div class="frame"><img src="images/gallery-coast.jpg" alt="Matthew and Katrina standing on coastal rocks by the ocean"></div>
+      <div class="frame"><img src="images/gallery-snowboard.jpg" alt="Katrina and Matthew in a gondola on a snowboarding trip"></div>
+      <div class="frame"><img src="images/gallery-coast.jpg" alt="Katrina and Matthew standing on coastal rocks by the ocean"></div>
     </div>
   </div>
 </div>
@@ -905,12 +947,13 @@ We can't wait to celebrate with you.
       <div class="frame"><img src="images/scratched-savethedate-1.jpg" alt="A discarded save-the-date design with a gold crest and a sketch of Le Chateau"></div>
       <div class="frame"><img src="images/scratched-savethedate-2.jpg" alt="A discarded save-the-date design with a sepia-toned photo of the couple walking in the snow"></div>
     </div>
+    <button class="btn-link" id="emptyRecycleBtn" type="button" style="margin-top:12px;">Empty Recycle Bin</button>
   </div>
 </div>
 
 <!-- ======= START MENU ======= -->
 <div class="start-menu" id="startMenu">
-  <div class="start-menu-header">Matthew &amp; Katrina</div>
+  <div class="start-menu-header">Katrina &amp; Matthew</div>
   <div class="start-menu-item" data-win="info"><svg viewBox="0 0 32 32"><rect x="6" y="3" width="20" height="26" rx="1" fill="#f3ead2" stroke="#6b4423" stroke-width="1.5"/></svg>Save_The_Date.txt</div>
   <div class="start-menu-item" data-win="venues"><svg viewBox="0 0 32 32"><path d="M8 3h11l5 5v21H8z" fill="#e8d2a0" stroke="#6b4423" stroke-width="1.5"/></svg>Ceremony &amp; Reception</div>
   <div class="start-menu-item" data-win="schedule"><svg viewBox="0 0 32 32"><rect x="4" y="5" width="24" height="22" fill="#e7ded0" stroke="#6b4423" stroke-width="1.5"/></svg>Schedule</div>
@@ -922,6 +965,28 @@ We can't wait to celebrate with you.
   <div class="start-menu-item" data-win="paint"><svg viewBox="0 0 32 32"><path d="M16 4c-7 0-12 5-12 11 0 4 3 6 6 6 1 0 2-1 2-2s-1-1-1-2c0-1 1-2 2-2h6c4 0 7-3 7-7 0-3-4-4-10-4z" fill="#e8d2a0" stroke="#6b4423" stroke-width="1.3"/></svg>guestbook.bmp</div>
   <div class="start-menu-item" data-win="floppy"><svg viewBox="0 0 32 32"><path d="M5 4h18l4 4v20a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1z" fill="#1b1430" stroke="#c39a5c" stroke-width="1.3"/></svg>Save_The_Date.ics</div>
   <div class="start-menu-item" data-win="mattstuff"><svg viewBox="0 0 32 32"><path d="M3 9h10l3 3h13v15a1 1 0 01-1 1H4a1 1 0 01-1-1V9z" fill="#e0b25a" stroke="#6b4423" stroke-width="1.3"/></svg>Matt's Stuff</div>
+</div>
+
+<!-- ======= ERROR DIALOG EASTER EGG ======= -->
+<div class="modal-scrim" id="errorScrim"></div>
+<div class="xp-window error-dialog" id="errorDialog">
+  <div class="title-bar">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#c0392b"/><path d="M8 8l8 8M16 8l-8 8" stroke="#fff" stroke-width="2"/></svg>
+    <span class="title-bar-text">Error</span>
+    <div class="title-bar-controls">
+      <button class="btn-close" id="errorCloseX" aria-label="Close">&#10005;</button>
+    </div>
+  </div>
+  <div class="window-body" style="text-align:center;">
+    <svg class="error-icon" viewBox="0 0 24 24" width="40" height="40"><path d="M12 2L1 21h22L12 2z" fill="#f5c344" stroke="#7a5a0a" stroke-width="1"/><rect x="11" y="9" width="2" height="6" fill="#2a1810"/><rect x="11" y="16" width="2" height="2" fill="#2a1810"/></svg>
+    <p style="margin:10px 0 4px; font-weight:600;">Fatal Exception: Too Much Love</p>
+    <p style="font-size:12.5px; color:var(--muted-warm); margin-bottom:14px;">Error 0x02122027 &mdash; cannot empty Recycle Bin. These save-the-dates refuse to be deleted out of pure sentimentality.</p>
+    <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+      <button class="btn-link" id="errAbort" type="button">Abort</button>
+      <button class="btn-link" id="errRetry" type="button">Retry</button>
+      <button class="btn-link" id="errFail" type="button">Fail (in Love)</button>
+    </div>
+  </div>
 </div>
 
 <!-- ======= LIGHTBOX ======= -->
@@ -951,7 +1016,7 @@ We can't wait to celebrate with you.
     schedule:'Schedule.xls',
     travel:'Travel_and_Hotel.exe',
     rsvp:'RSVP - Internet Explorer',
-    chat:'xMattAndKat27x - Instant Message',
+    chat:'xKatAndMatt27x - Instant Message',
     mp3:'iris.mp3 - Napster',
     photos:'My Pictures',
     paint:'guestbook.bmp - Paint',
@@ -1153,7 +1218,8 @@ We can't wait to celebrate with you.
     "brb planning a wedding! check Travel_and_Hotel.exe for hotel info :)",
     "can't talk now, picking out appetizers for Le Chateau... RSVP on the globe icon! <3",
     "literally cannot stop thinking about 2.12.2027. ttyl!",
-    "away from keyboard - probably looking at florists again lol"
+    "away from keyboard - probably looking at florists again lol",
+    "psst - don't forget it's all black for the reception! check Ceremony_and_Reception.exe for details :)"
   ];
   function addChatMsg(text, who){
     var div = document.createElement('div');
@@ -1326,13 +1392,13 @@ We can't wait to celebrate with you.
     var ics = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
-      'PRODID:-//Matthew and Katrina//Wedding//EN',
+      'PRODID:-//Katrina and Matthew//Wedding//EN',
       'BEGIN:VEVENT',
       'UID:mkwedding2027@mattandkatrina',
       'DTSTAMP:20261019T000000Z',
       'DTSTART;VALUE=DATE:20270212',
       'DTEND;VALUE=DATE:20270213',
-      "SUMMARY:Matthew & Katrina's Wedding",
+      "SUMMARY:Katrina & Matthew's Wedding",
       'LOCATION:Le Chateau\\, 1410 Old Post Road\\, South Salem\\, NY 10590',
       "DESCRIPTION:Ceremony at St. Luke's Episcopal Church\\, reception at Le Chateau. RSVP: https://www.zola.com/wedding/katrinaandmatthew2027/rsvp",
       'END:VEVENT',
@@ -1348,6 +1414,26 @@ We can't wait to celebrate with you.
     document.getElementById('floppyStatus').textContent = 'Saved! Check your downloads.';
   });
 
+  // ---- error dialog easter egg ----
+  var errorDialog = document.getElementById('errorDialog');
+  var errorScrim = document.getElementById('errorScrim');
+  function openError(){
+    errorDialog.classList.add('open');
+    errorScrim.style.display = 'block';
+    zCounter += 1;
+    errorDialog.style.zIndex = 3000 + zCounter;
+  }
+  function closeError(){
+    errorDialog.classList.remove('open');
+    errorScrim.style.display = 'none';
+  }
+  document.getElementById('emptyRecycleBtn').addEventListener('click', openError);
+  document.getElementById('errorCloseX').addEventListener('click', closeError);
+  document.getElementById('errAbort').addEventListener('click', closeError);
+  document.getElementById('errRetry').addEventListener('click', closeError);
+  document.getElementById('errFail').addEventListener('click', closeError);
+  errorScrim.addEventListener('click', closeError);
+
   // open the Save the Date note by default, like a fresh desktop greeting
   openWindow('info');
 
@@ -1358,6 +1444,60 @@ We can't wait to celebrate with you.
     el.classList.add('pop-in');
     setTimeout(function(){ el.classList.remove('pop-in'); }, 400);
   }, 2200);
+})();
+
+(function(){
+  var bootScreen = document.getElementById('bootScreen');
+  var bootLinesEl = document.getElementById('bootLines');
+  var bootProgressInner = document.getElementById('bootProgressInner');
+  var bootSkip = document.getElementById('bootSkip');
+
+  var bootLines = [
+    'ChateauOS [Version 2027.02.12]',
+    '(c) Katrina & Matthew. All rights reserved (to love each other).',
+    '\u00A0',
+    'Loading Love.dll ......... OK',
+    'Loading Chateau.sys ...... OK',
+    'Mounting Hearts (C:) ..... OK',
+    '\u00A0',
+    'Dialing into Le Chateau network...'
+  ];
+
+  bootLines.forEach(function(text, i){
+    var div = document.createElement('div');
+    div.className = 'line';
+    div.textContent = text;
+    bootLinesEl.appendChild(div);
+    setTimeout(function(){ div.classList.add('show'); }, 220 * i);
+  });
+
+  function finishBoot(){
+    bootScreen.classList.add('fade');
+    setTimeout(function(){ bootScreen.style.display = 'none'; }, 650);
+  }
+
+  var bootLineDelay = 220 * bootLines.length + 250;
+  setTimeout(function(){
+    var bootPct = 0;
+    var bootTimer = setInterval(function(){
+      bootPct += 6 + Math.random() * 10;
+      if (bootPct >= 100){
+        bootPct = 100;
+        clearInterval(bootTimer);
+        bootProgressInner.style.width = '100%';
+        var doneLine = document.createElement('div');
+        doneLine.className = 'line show';
+        doneLine.textContent = 'Connected at 56.6 Kbps.';
+        bootLinesEl.appendChild(doneLine);
+        setTimeout(finishBoot, 550);
+        return;
+      }
+      bootProgressInner.style.width = bootPct + '%';
+    }, 180);
+  }, bootLineDelay);
+
+  setTimeout(function(){ bootSkip.classList.add('show'); }, 1500);
+  bootScreen.addEventListener('click', finishBoot);
 })();
 </script>
 
